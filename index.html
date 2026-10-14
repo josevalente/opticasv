@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Óptica V · Probador virtual</title>
+  <meta name="description" content="Tienda demo de Óptica V: anteojos de lectura y de sol con probador virtual de realidad aumentada." />
+  <meta name="theme-color" content="#e8603f" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="demo-banner">Tienda de demostración · las compras son simuladas, no se realiza ningún cobro</div>
+
+  <header class="site-header">
+    <a class="logo" href="#" aria-label="Óptica V, inicio">
+      <span class="logo-word">óptica</span>
+      <svg class="logo-v" viewBox="0 0 60 56" aria-hidden="true">
+        <polygon points="0,0 22,0 38,56 22,56" fill="#e8603f" />
+        <polygon points="40,0 60,0 38,56 31,33" fill="#e03a3a" />
+      </svg>
+    </a>
+    <nav class="main-nav">
+      <a href="#vitrina" data-filter-type="lectura">Lectura</a>
+      <a href="#vitrina" data-filter-type="sol">Sol</a>
+      <button class="nav-cta" data-open-mirror>Probador AR</button>
+    </nav>
+    <button class="bag-btn" id="bagBtn" aria-label="Abrir bolsa">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="bag-count" id="bagCount">0</span>
+    </button>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Una óptica diferente para un mundo diferente</p>
+        <h1>Pruébatelos frente al&nbsp;espejo, <em>desde tu&nbsp;casa.</em></h1>
+        <p class="lead">Activa tu cámara y mírate con cada armazón como si estuvieras en la tienda. Anteojos de lectura y de sol, con medidas reales y a tu escala.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-open-mirror>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></svg>
+            Entrar al probador
+          </button>
+          <a class="btn btn-ghost" href="#vitrina">Ver vitrina</a>
+        </div>
+        <ul class="hero-points">
+          <li>Seguimiento facial en tiempo real</li>
+          <li>Tu cámara no sale de tu dispositivo</li>
+          <li>Retiro en tienda o despacho</li>
+        </ul>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-v hero-v1"></div>
+        <div class="hero-v hero-v2"></div>
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-tag" id="heroTag"></div>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="steps">
+      <div class="step"><span>1</span><h3>Elige en la vitrina</h3><p>Filtra por lectura o sol, forma y tamaño.</p></div>
+      <div class="step"><span>2</span><h3>Mírate al espejo</h3><p>La cámara detecta tu rostro y te pone el armazón a escala real.</p></div>
+      <div class="step"><span>3</span><h3>Pasa por caja</h3><p>Agrega a tu bolsa, elige retiro o despacho y listo.</p></div>
+    </section>
+
+    <!-- VITRINA -->
+    <section class="vitrina" id="vitrina">
+      <div class="vitrina-head">
+        <h2>Vitrina</h2>
+        <div class="face-pill hidden" id="facePill"></div>
+      </div>
+      <div class="filters">
+        <div class="chips" id="typeChips">
+          <button class="chip active" data-type="all">Todos</button>
+          <button class="chip" data-type="lectura">Lectura</button>
+          <button class="chip" data-type="sol">Sol</button>
+        </div>
+        <div class="chips" id="shapeChips"></div>
+        <label class="sort">
+          Ordenar
+          <select id="sortSelect">
+            <option value="featured">Destacados</option>
+            <option value="price-asc">Precio: menor a mayor</option>
+            <option value="price-desc">Precio: mayor a menor</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid" id="productGrid"></div>
+    </section>
+
+    <section class="store-info">
+      <div>
+        <h3>¿Prefieres venir?</h3>
+        <p>Te esperamos en nuestras tiendas con asesoría de un óptico. Reserva tus favoritos desde el probador y los dejamos listos.</p>
+      </div>
+      <ul>
+        <li><strong>Providencia</strong><span>Av. Providencia 1234 · Lun–Sáb 10–20 h</span></li>
+        <li><strong>Las Condes</strong><span>Av. Apoquindo 4500 · Lun–Sáb 10–20 h</span></li>
+        <li><strong>Viña del Mar</strong><span>Av. Libertad 900 · Lun–Sáb 10–19 h</span></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>óptica V · demo de probador virtual</span>
+    <span>Imágenes procesadas solo en tu navegador con MediaPipe.</span>
+  </footer>
+
+  <!-- PRODUCTO -->
+  <div class="modal" id="productModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card product-sheet" role="dialog" aria-modal="true" aria-labelledby="pmName">
+      <button class="icon-btn close" data-close aria-label="Cerrar">✕</button>
+      <div class="pm-visual">
+        <canvas id="pmCanvas"></canvas>
+        <input type="range" id="pmRotate" min="-60" max="60" value="-18" aria-label="Girar anteojo" />
+        <small>Desliza para girar</small>
+      </div>
+      <div class="pm-info">
+        <p class="eyebrow" id="pmType"></p>
+        <h2 id="pmName"></h2>
+        <p class="pm-price" id="pmPrice"></p>
+        <p id="pmDesc"></p>
+        <div class="swatches" id="pmSwatches"></div>
+        <p class="variant-name" id="pmVariant"></p>
+        <div class="field" id="pmPowerField">
+          <label for="pmPower">Graduación de lectura</label>
+          <select id="pmPower"></select>
+        </div>
+        <label class="check" id="pmBlueField"><input type="checkbox" id="pmBlue" /> Filtro luz azul (+$5.000)</label>
+        <dl class="specs" id="pmSpecs"></dl>
+        <div class="pm-actions">
+          <button class="btn btn-ghost" id="pmTry">Probármelos</button>
+          <button class="btn btn-primary" id="pmAdd">Agregar a la bolsa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBADOR / ESPEJO -->
+  <div class="mirror-room" id="mirrorRoom" hidden>
+    <div class="room-light"></div>
+    <header class="mirror-top">
+      <button class="icon-btn light" id="mirrorClose" aria-label="Salir del probador">←</button>
+      <div class="mirror-title">Probador <span>óptica V</span></div>
+      <button class="bag-btn light" data-open-bag aria-label="Abrir bolsa">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="bag-count" data-bag-count>0</span>
+      </button>
+    </header>
+
+    <div class="mirror-stage">
+      <div class="mirror">
+        <canvas id="mirrorCanvas"></canvas>
+        <div class="mirror-glass"></div>
+
+        <div class="mirror-start" id="mirrorStart">
+          <div class="mirror-start-card">
+            <div class="mirror-icon">
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.6"/></svg>
+            </div>
+            <h3>Ponte frente al espejo</h3>
+            <p>Usaremos tu cámara para mostrarte con los anteojos puestos. Nada se graba ni se envía: todo ocurre en tu navegador.</p>
+            <button class="btn btn-primary" id="startCamera">Activar cámara</button>
+            <label class="btn btn-ghost light file-btn">
+              Usar una foto
+              <input type="file" accept="image/*" id="photoInput" />
+            </label>
+            <p class="status" id="mirrorStatus"></p>
+          </div>
+        </div>
+
+        <div class="mirror-hint hidden" id="mirrorHint">Acércate y mira de frente al espejo</div>
+        <div class="flash" id="flash"></div>
+
+        <div class="mirror-tools">
+          <button class="tool" id="snapBtn" title="Tomar foto"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg><span>Foto</span></button>
+          <button class="tool" id="compareBtn" title="Comparar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/></svg><span>Comparar <b id="snapCount">0</b></span></button>
+          <button class="tool" id="adjustBtn" title="Ajustar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Ajustar</span></button>
+        </div>
+
+        <div class="adjust-panel hidden" id="adjustPanel">
+          <label>Tamaño <input type="range" id="adjSize" min="0.85" max="1.15" step="0.01" value="1" /></label>
+          <label>Altura <input type="range" id="adjHeight" min="-6" max="6" step="0.5" value="0" /></label>
+          <button class="link-btn" id="adjReset">Restablecer</button>
+        </div>
+      </div>
+
+      <aside class="mirror-panel">
+        <div class="face-advice hidden" id="faceAdvice"></div>
+        <div class="mp-product">
+          <p class="eyebrow" id="mpType"></p>
+          <h3 id="mpName"></h3>
+          <p class="mp-meta" id="mpMeta"></p>
+          <div class="swatches" id="mpSwatches"></div>
+          <p class="variant-name" id="mpVariant"></p>
+          <div class="mp-buy">
+            <span class="mp-price" id="mpPrice"></span>
+            <button class="btn btn-primary" id="mpAdd">Agregar a la bolsa</button>
+          </div>
+          <button class="link-btn light" id="mpDetails">Ver detalle y medidas</button>
+        </div>
+      </aside>
+    </div>
+
+    <div class="tray">
+      <div class="tray-tabs" id="trayTabs">
+        <button class="chip dark active" data-tray="all">Todos</button>
+        <button class="chip dark" data-tray="lectura">Lectura</button>
+        <button class="chip dark" data-tray="sol">Sol</button>
+        <button class="chip dark hidden" data-tray="reco" id="trayReco">Para tu rostro</button>
+      </div>
+      <div class="tray-items" id="trayItems"></div>
+    </div>
+  </div>
+
+  <!-- COMPARAR -->
+  <div class="modal" id="compareModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card compare-card" role="dialog" aria-modal="true" aria-labelledby="cmpTitle">
+      <button class="icon-btn close" data-close aria-label="Cerrar">✕</button>
+      <h2 id="cmpTitle">Tus fotos en el espejo</h2>
+      <p class="muted">Compara lado a lado como lo harías con el vendedor. Las fotos quedan solo en este dispositivo.</p>
+      <div class="compare-grid" id="compareGrid"></div>
+    </div>
+  </div>
+
+  <!-- BOLSA -->
+  <div class="drawer" id="bagDrawer" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <aside class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="bagTitle">
+      <header>
+        <h2 id="bagTitle">Tu bolsa</h2>
+        <button class="icon-btn close" data-close aria-label="Cerrar">✕</button>
+      </header>
+      <div class="bag-items" id="bagItems"></div>
+      <footer class="bag-footer">
+        <div class="row"><span>Subtotal</span><strong id="bagSubtotal">$0</strong></div>
+        <p class="muted small">Envío y retiro se eligen en caja.</p>
+        <button class="btn btn-primary block" id="checkoutBtn">Ir a caja</button>
+      </footer>
+    </aside>
+  </div>
+
+  <!-- CAJA -->
+  <div class="modal" id="checkoutModal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card checkout-card" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+      <button class="icon-btn close" data-close aria-label="Cerrar">✕</button>
+      <h2 id="coTitle">Caja</h2>
+      <div class="sim-note">Compra simulada · no se solicita ni se cobra ningún medio de pago real</div>
+      <ol class="co-steps" id="coSteps">
+        <li class="active">Entrega</li><li>Pago</li><li>Boleta</li>
+      </ol>
+      <div class="co-body" id="coBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
